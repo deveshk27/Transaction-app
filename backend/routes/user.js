@@ -19,6 +19,12 @@ const signInBody = zod.object({
     password: zod.string()
 });
 
+const updateBody = zod.object({
+    password: zod.string(),
+    firstName: zod.string(),
+    lastName: zod.string()
+});
+
 router.post('/signup', async (req, res) => {
     const { success } = signUpBody.safeParse(req.body);
 
@@ -85,6 +91,50 @@ router.post('/signin', async (req, res) => {
     res.json({
         token
     })
+})
+
+router.put('/', authMiddleware, async (req, res) => {
+    const { success } = updateBody.safeParse(req.body);
+
+    if (!success) {
+        return res.status(403).json({
+            message: "Incorrect inputs"
+        })
+    }
+
+    const userId = req.userId;
+
+    try {
+        await User.updateOne({ _id: userId }, req.body);
+
+        res.status(200).json({
+            message: "User updated successfully"
+        });
+    } catch (err) {
+        return res.status(411).json({
+            message: "Error while updating information"
+        });
+    }
+})
+
+router.get('/bulk', authMiddleware, async (req, res) => {
+    const filter = req.query.filter || "";
+
+    const users = await User.find({
+        $or: [{
+            firstName: {
+                "$regex": filter
+            }
+        }, {
+            lastName: {
+                "$regex": filter
+            }
+        }]
+    })
+
+    res.status(200).json({
+        users
+    });
 })
 
 module.exports = router;
