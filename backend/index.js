@@ -6,7 +6,6 @@ const bodyParser = require("body-parser");
 const app = express();
 
 app.use(cors());
-app.use(bodyParser);
 app.use(express.json());
 
 app.use('/api/v1', rootRouter);
