@@ -6,15 +6,24 @@ const { default: mongoose } = require('mongoose');
 const router = express.Router();
 
 router.get('/balance', authMiddleware, async (req, res) => {
-    const account = await Account.findOne({
-        userId: req.userId
-    });
+    console.log(req.userId);
+    try {
+        const account = await Account.findOne({
+            userId: req.userId
+        });
 
-    const balance = account.balance;
 
-    res.status(200).json({
-        balance: balance
-    });
+
+        const balance = account.balance;
+
+        return res.status(200).json({
+            balance: balance
+        });
+    } catch (err) {
+        return res.status(500).json({
+            message: "Internal server error"
+        })
+    }
 })
 
 router.post('/transfer', authMiddleware, async (req, res) => {
