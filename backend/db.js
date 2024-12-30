@@ -3,32 +3,46 @@ const mongoose = require('mongoose');
 mongoose.connect('mongodb+srv://admin:admin123@cluster0.8fgtt.mongodb.net/paytm');
 
 const userSchema = new mongoose.Schema({
-    username : {
-        type : String,
-        required : true,
-        unique : true,
-        minLength : 4,
-        maxLength : 20
-    }, 
-    password : {
-        type : String,
-        required : true ,
-        minLength : 6
+    username: {
+        type: String,
+        required: true,
+        unique: true,
+        minLength: 4,
+        maxLength: 20
     },
-    firstName : {
-        type : String,
-        required : true ,
+    password: {
+        type: String,
+        required: true,
+        minLength: 6
     },
-    lastName : {
-        type : String,
-        required : true 
+    firstName: {
+        type: String,
+        required: true,
+    },
+    lastName: {
+        type: String,
+        required: true
     }
 })
 
-const User = mongoose.model('User' , userSchema) ;
+const accountSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    balance: {
+        type: Number,
+        required: true
+    }
+})
+
+const User = mongoose.model('User', userSchema);
+const Account = mongoose.model('Account', accountSchema);
 
 module.exports = {
-    User
+    User,
+    Account
 }
 
 
